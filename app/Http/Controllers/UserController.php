@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
-use Validator;
-use Helpers\SuccessMessage;
+use App\Http\Requests\UserValidator;
+use App\Http\Resources\UserResource as UserResource;
 
 class UserController extends Controller
 {
@@ -16,7 +15,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response()->json(["users" => User::orderBy('id', 'desc')->get()], 200);
+        $users = User::orderBy('id','desc')->paginate(15);
+        return UserResource::collection($users);
     }
 
     /**
@@ -26,7 +26,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -35,16 +35,12 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserValidator $request)
     {
-        $this->validatedUser();
+        $user = User::create($request->validated());
+        new (nwe \App\Helpers\SuccessMessage)->response("User","Created", 201);
+       
         
-        $user = User::create($request->all());
-        
-        return response()->json([
-                    "User"=>$user,
-                    "message" => "User created succesffuly"
-                    ], 201);
     }
 
     /**
@@ -91,19 +87,5 @@ class UserController extends Controller
     {
         //
     }
-    private function validatedUser(){
-        return request()->validate([
-            "name" => "required",
-            "email" => "required|unique:users",
-            "phone"=>"required",
-            "balance"=> "required",
-            "password" => "required"
-
-        ],[
-            "name.required" => " please enter the name",
-            "email.unique" => "This email exists please try another one",
-            "phone.unique" => "This phone exists please try another one",
-
-        ]);
-    }
+   
 }

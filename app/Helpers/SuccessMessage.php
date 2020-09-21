@@ -1,8 +1,9 @@
 <?php
-namespace Helpers\Classes;
+namespace App\Helpers;
  class SuccessMessage {
-    public function __construct($model, $action, $success ='is successfull'){
-        return $model.$action.$success;
+
+    public function customResponse($model, $action, $httpCode){ // user is created 201
+        return response()->json([$model.'is'.$action], $httpCode);
     }
 } 
 ?>

@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::apiResource('/users', 'UserController');
 
+
 Route::get('/', function(){
  return response()->json(['message'=>'Hi it\'s Api test'], 200);
 });
