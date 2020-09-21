@@ -19,7 +19,18 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::apiResource('/users', 'UserController');
 
-
-Route::get('/', function(){
- return response()->json(['message'=>'Hi it\'s Api test'], 200);
+Route::group([
+    'prefix' => 'auth'
+], function(){
+    Route::post('login', 'UserController@login');
+    Route::post('signup', 'UserController@store');
+    
+    Route::group([
+        'middleware' => 'auth:api'
+    ], function() {
+        Route::get('logout','UserController@logout');
+        Route::get('user', 'UserController@user');
+    });
 });
+
+
