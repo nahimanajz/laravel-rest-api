@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Post;
+
 use Illuminate\Http\Request;
 
-class PostController extends Controller
+class DebitController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,9 +13,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        return response()->json([
-            "posts"=>Post::all()
-        ], 200);
+        //
     }
 
     /**
@@ -36,8 +34,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $post = Post::create($request->all());
-        return response()->json(['post'=>$post], 201);
+        //
     }
 
     /**
@@ -48,7 +45,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        return response()->json(["post"=>Post::find($id)], 200);
+        //
     }
 
     /**
@@ -82,9 +79,6 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        return response()->json([
-             "post" => Post::find($id)->delete(),
-             "message"=> "post deleted"
-        ], 200);
+        //
     }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Customer;
 use Illuminate\Http\Request;
+use App\User;
+use Validator;
+use Helpers\SuccessMessage;
 
-class CustomerController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +16,7 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        return response()->json( Customer::orderBy('id','desc')->get(), 200);
+        return response()->json(["users" => User::orderBy('id', 'desc')->get()], 200);
     }
 
     /**
@@ -35,8 +37,14 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $customer = Customer::create($request->all());
-        return response()->json($customer, 201);
+        $this->validatedUser();
+        
+        $user = User::create($request->all());
+        
+        return response()->json([
+                    "User"=>$user,
+                    "message" => "User created succesffuly"
+                    ], 201);
     }
 
     /**
@@ -47,8 +55,7 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        $customer = Customer::findOrFail($id);
-        return response()->json($customer, 200);
+        //
     }
 
     /**
@@ -71,10 +78,7 @@ class CustomerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
-        $customer = Customer::findOrFail($id)
-                              ->update($request->all());                          
-        return response()->json(['message'=> 'customer updated'], 200);
+        //
     }
 
     /**
@@ -85,7 +89,21 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        $customer = Customer::findOrFail($id)->delete();
-        return response()->json(['message' => 'customer deleted', 'customer' => $customer], 200);
+        //
+    }
+    private function validatedUser(){
+        return request()->validate([
+            "name" => "required",
+            "email" => "required|unique:users",
+            "phone"=>"required",
+            "balance"=> "required",
+            "password" => "required"
+
+        ],[
+            "name.required" => " please enter the name",
+            "email.unique" => "This email exists please try another one",
+            "phone.unique" => "This phone exists please try another one",
+
+        ]);
     }
 }
