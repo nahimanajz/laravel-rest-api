@@ -17,9 +17,26 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::apiResource('/users', 'UserController');
 
-Route::resource('customers', 'CustomerController')->except(['create', 'edit']);
-Route::resource('posts', 'PostController')->except(['create', 'edit']);
+Route::group([
+    'prefix' => 'auth'
+], function(){
+    Route::post('login', 'UserController@login');
+    Route::post('signup', 'UserController@store');
+    Route::group([
+        'middleware' => 'auth:api'
+    ], function() {
+        Route::get('logout','UserController@logout');
+        Route::get('user', 'UserController@user');
+    });
+});
+
+//before setting autorization
+Route::apiResource('/expenses','ExpenseController')->except(['create','edit']);
+Route::apiResource('/debits','DebitController')->except(['create','edit']);
+Route::apiResource('/credits','CreditController')->except(['create','edit']);
+
 
 Route::get('/', function(){
  return response()->json(['message'=>'Hi it\'s Api test'], 200);

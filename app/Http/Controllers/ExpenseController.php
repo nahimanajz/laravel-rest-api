@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Post;
-use Illuminate\Http\Request;
 
-class PostController extends Controller
+use Illuminate\Http\Request;
+use App\Expense;
+use App\Http\Requests\StoreExpenseRequest;
+use App\Http\Resources\ExpenseResource as ExpenseResource;
+class ExpenseController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,9 +15,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        return response()->json([
-            "posts"=>Post::all()
-        ], 200);
+        $expenses = Expense::all();
+        return ExpenseResource::collection($expenses);       
     }
 
     /**
@@ -34,10 +35,13 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreExpenseRequest $request)
     {
-        $post = Post::create($request->all());
-        return response()->json(['post'=>$post], 201);
+        return response()->json([
+            "message"=> "Expense stored successfully",
+            "expense" => Expense::create($request->validated()) 
+        ], 201);
+        
     }
 
     /**
@@ -46,9 +50,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($category)
     {
-        return response()->json(["post"=>Post::find($id)], 200);
+        $expense = Expense::where('category',$category)->get();
+        return ExpenseResource::collection($expense);
     }
 
     /**
@@ -69,9 +74,14 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreExpenseRequest $request, $id)
     {
-        //
+        $expense = Expense::findOrFail($id);
+        $expense->update($request->validated());
+        return response()->json([
+            "message"=> "Expense Updated Successfully",
+            "expense" => $expense 
+        ], 200);
     }
 
     /**
@@ -82,9 +92,8 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        return response()->json([
-             "post" => Post::find($id)->delete(),
-             "message"=> "post deleted"
-        ], 200);
+        $expense = Expense::findOrFail($id);
+        $expense->delete();
+        return response()->json([ "message"=> "Expense Deleted Successfully"], 200);
     }
 }
