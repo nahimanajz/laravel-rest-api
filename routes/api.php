@@ -38,3 +38,6 @@ Route::apiResource('/debits','DebitController')->except(['create','edit']);
 Route::apiResource('/credits','CreditController')->except(['create','edit']);
 
 
+Route::get('/', function(){
+ return response()->json(['message'=>'Hi it\'s Api test'], 200);
+});
