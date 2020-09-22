@@ -45,6 +45,6 @@ class User extends Authenticatable
         return $this->hasMany(Debit::class);
     }
     public function expenses() {
-        return $this->hasMany(Expense::class);
+        return $this->hasMany('App\Expense', 'user_id');
     }
 }

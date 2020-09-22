@@ -8,8 +8,8 @@ class Expense extends Model
 {
     protected $guarded = [];
 
-    public function user() {
-        return $this->belongsTo(App\User::class);
+    public function user() {    
+        return $this->belongsTo('App\User');
     }
 
 }

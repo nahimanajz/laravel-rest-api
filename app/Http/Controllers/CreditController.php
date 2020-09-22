@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreCreditRequest;
+use App\Http\Resources\CreditResource as CreditResource;
+use App\Credit;
 
 class CreditController extends Controller
 {
@@ -12,8 +15,12 @@ class CreditController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        //
+    {   try {
+            return CreditResource::collection(Credit::all());
+
+    } catch (\Throwable $th) {
+        return response()->json(["message" =>$th->getMessage() ], 500);
+    }
     }
 
     /**
@@ -32,9 +39,14 @@ class CreditController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCreditRequest $request)
     {
-        //
+        $data = $request->validated();
+        $StoreCredit = Credit::create($data);
+        return response()->json([
+            "message"=>"Credit is saved successfully",
+            'Credit'=> $StoreCredit
+        ], 201); 
     }
 
     /**
@@ -45,7 +57,14 @@ class CreditController extends Controller
      */
     public function show($id)
     {
-        //
+        $Credits = Credit::where('id', $id)->orWhere('phone',$id)->orWhere('creditor', $id)->get();   
+        if(count($Credits) === 0) {
+            return response()->json([
+                "message"=> "You have no Credit from this ID",
+                "status" => 404
+                ]);
+        }        
+        return CreditResource::collection($Credits);        
     }
 
     /**
@@ -66,9 +85,16 @@ class CreditController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreCreditRequest $request, $id)
     {
-        //
+        $Credit  = Credit::findOrFail($id);
+        $Credit->update($request->validated());
+        
+        return response()->json([
+            "message"=>"Credit is updated successfully",
+            'Credit'=> $Credit
+        ], 200); 
+    
     }
 
     /**
@@ -79,6 +105,10 @@ class CreditController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $Credit  = Credit::findOrFail($id);
+        $Credit->delete();
+        return response()->json([
+            "message"=>"Credit is deleted successfully",
+        ], 200); 
     }
 }

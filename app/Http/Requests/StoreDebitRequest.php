@@ -25,7 +25,7 @@ class StoreDebitRequest extends FormRequest
     {
         return [
             "debitor"=> "required|string",
-            "phone"=>"required|numeric",
+            "phone"=>"required|string",
             "amount"=>"required|integer",
             "timeToPay"=>"required|date_format:Y-m-d H:i:s|after:yesterday",
             "user_id" => "required|exists:users,id"
@@ -34,7 +34,7 @@ class StoreDebitRequest extends FormRequest
     public function messages() {
         return [
             "debitor.required"=> "You need to write names someone who gave you this money",
-            "phone.required"=>"please write his phone number",
+            "phone.required"=>"please write a phone number",
             "amount.required"=> "write the money your debitor gave you",
             "timeToPay.after"=>"Do not write past date"
         ];

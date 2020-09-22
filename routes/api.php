@@ -24,7 +24,6 @@ Route::group([
 ], function(){
     Route::post('login', 'UserController@login');
     Route::post('signup', 'UserController@store');
-    
     Route::group([
         'middleware' => 'auth:api'
     ], function() {
@@ -32,5 +31,10 @@ Route::group([
         Route::get('user', 'UserController@user');
     });
 });
+
+//before setting autorization
+Route::apiResource('/expenses','ExpenseController')->except(['create','edit']);
+Route::apiResource('/debits','DebitController')->except(['create','edit']);
+Route::apiResource('/credits','CreditController')->except(['create','edit']);
 
 

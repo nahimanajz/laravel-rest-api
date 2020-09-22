@@ -25,7 +25,7 @@ class StoreCreditRequest extends FormRequest
     {
         return [
             "creditor"=> "required|string",
-            "phone"=>"required|numeric",
+            "phone"=>"required|string",
             "amount"=>"required|integer",
             "timeToPay"=>"required|date_format:Y-m-d H:i:s|after:yesterday",
             "user_id" => "required|exists:users,id"
